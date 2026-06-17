@@ -19,8 +19,13 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
+const allowedOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(...process.env.FRONTEND_URL.split(',').map(url => url.trim()));
+}
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
