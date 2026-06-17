@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bone text-ink font-body antialiased selection:bg-pine selection:text-bone;
+  }
+
+  /* Customize native scrollbar to match Vestra premium branding */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-bone;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-mist rounded-full hover:bg-brass transition-colors;
+  }
+}
+
+/* Custom interactive animation for nav underlines */
+.nav-link-underline {
+  position: relative;
+}
+.nav-link-underline::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleX(0);
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  @apply bg-pine;
+  transform-origin: bottom center;
+  transition: transform 0.25s ease-out;
+}
+.nav-link-underline:hover::after {
+  transform: scaleX(1);
+}
