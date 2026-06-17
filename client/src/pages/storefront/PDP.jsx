@@ -267,7 +267,7 @@ export default function PDP() {
       {/* Top Details & Gallery Panel */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
         {/* Left: Sticky Image Gallery */}
-        <div className="md:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-4 sticky top-28">
+        <div className="md:col-span-7 grid grid-cols-1 md:grid-cols-12 gap-4 md:sticky md:top-28">
           {/* Thumbnails rail (Desktop) */}
           <div className="hidden md:flex md:col-span-2 flex-col gap-3">
             {product.images?.map((img, idx) => (

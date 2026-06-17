@@ -89,26 +89,26 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Prices & Buy Now CTA */}
-        <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-mist/20">
-          <div className="flex items-baseline gap-2 font-display">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-4 pt-3 border-t border-mist/20">
+          <div className="flex items-baseline gap-1.5 font-display">
             {showRange ? (
               <span className="text-xs font-bold text-pine">
                 ₹{priceMin.toLocaleString('en-IN')} - ₹{priceMax.toLocaleString('en-IN')}
               </span>
             ) : (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-baseline gap-1.5 flex-wrap">
                 <span className="text-sm font-bold text-pine">
                   ₹{priceMin.toLocaleString('en-IN')}
                 </span>
                 {saleVariant && (
-                  <span className="text-[11px] font-medium text-ink/40 line-through">
+                  <span className="text-[10px] font-medium text-ink/40 line-through">
                     ₹{saleVariant.compareAtPrice.toLocaleString('en-IN')}
                   </span>
                 )}
               </div>
             )}
           </div>
-          <span className="px-3 py-1 bg-pine text-bone text-[9px] font-bold rounded-full uppercase tracking-wider transition-all duration-300 group-hover:bg-pine/90 group-hover:scale-[1.05] select-none shrink-0">
+          <span className="w-full sm:w-auto text-center px-2.5 py-1 bg-pine text-bone text-[9px] font-bold rounded-full uppercase tracking-wider transition-all duration-300 group-hover:bg-pine/90 group-hover:scale-[1.03] select-none shrink-0">
             Buy Now
           </span>
         </div>
