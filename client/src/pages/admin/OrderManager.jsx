@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Eye, FileText, CheckCircle2, XCircle, ArrowUpDown, ChevronDown, MessageSquare } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function OrderManager() {
   const [orders, setOrders] = useState([]);

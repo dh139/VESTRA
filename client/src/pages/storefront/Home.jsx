@@ -4,7 +4,7 @@ import { ArrowRight, Sparkles, Mail, ShieldCheck, Undo2, Truck } from 'lucide-re
 import axios from 'axios';
 import ProductCard from '../../components/ui/ProductCard';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function Home() {
   const [sections, setSections] = useState([]);

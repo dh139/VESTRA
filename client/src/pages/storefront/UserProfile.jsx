@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 export default function UserProfile() {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, ChevronDown, ChevronUp, Image, AlertCircle, Sparkles, Eye } from 'lucide-react';
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const buildImageUrl = (url, colorName, sizeName) => {
   if (!url) return '';

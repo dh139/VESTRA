@@ -4,7 +4,7 @@ import { SlidersHorizontal, ArrowUpDown, ChevronDown, Check, X } from 'lucide-re
 import axios from 'axios';
 import ProductCard from '../../components/ui/ProductCard';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const COLOR_SWATCHES = [
   { name: 'Pine Green', hex: '#1F3D2B' },
