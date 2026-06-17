@@ -70,22 +70,22 @@ export default function Navbar() {
       <nav 
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
           isScrolled 
-            ? 'mt-2 px-4 md:px-8' 
-            : 'mt-4 px-6 md:px-12'
+            ? 'mt-2 px-3 sm:px-4 md:px-8' 
+            : 'mt-4 px-4 sm:px-6 md:px-12'
         }`}
       >
         <div 
           className={`mx-auto max-w-7xl rounded-full border border-mist bg-bone/80 shadow-soft backdrop-blur-md transition-all duration-300 ${
             isScrolled 
-              ? 'py-2 px-6' 
-              : 'py-4 px-8'
+              ? 'py-2 px-4 sm:px-6' 
+              : 'py-3 sm:py-4 px-4 sm:px-8'
           }`}
         >
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link 
               to="/" 
-              className="font-display text-2xl font-bold tracking-tight text-pine hover:opacity-90 transition-opacity"
+              className="font-display text-xl sm:text-2xl font-bold tracking-tight text-pine hover:opacity-90 transition-opacity"
             >
               VESTRA
             </Link>
@@ -194,7 +194,7 @@ export default function Navbar() {
             </div>
 
             {/* Utility Icons (Search, Notifications, Profile, Cart) */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5 sm:gap-3">
               {/* Notifications bell dropdown */}
               {user && (
                 <div className="relative" ref={notifRef}>
@@ -265,10 +265,10 @@ export default function Navbar() {
                 <div className="relative group">
                   <Link 
                     to={user.role === 'admin' ? '/admin' : '/profile'} 
-                    className="flex items-center gap-1.5 p-1.5 pl-3 border border-mist rounded-full hover:bg-mist/30 transition-colors"
+                    className="flex items-center gap-1.5 p-2 sm:p-1.5 sm:pl-3 border border-mist rounded-full hover:bg-mist/30 transition-colors"
                   >
                     <UserIcon className="w-4 h-4 text-pine" />
-                    <span className="font-body text-xs font-semibold pr-1">
+                    <span className="hidden sm:inline font-body text-xs font-semibold pr-1">
                       {user.name.split(' ')[0]}
                     </span>
                   </Link>
