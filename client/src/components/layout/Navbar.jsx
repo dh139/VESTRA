@@ -213,7 +213,7 @@ export default function Navbar() {
 
                   {/* Notification Bell Dropdown */}
                   {isNotifOpen && (
-                    <div className="absolute right-0 mt-3 w-80 bg-bone border border-mist rounded-2xl shadow-soft py-3 z-50">
+                    <div className="fixed left-4 right-4 top-[76px] sm:absolute sm:left-auto sm:right-0 sm:top-auto sm:mt-3 sm:w-80 bg-bone border border-mist rounded-2xl shadow-soft py-3 z-50">
                       <div className="px-4 pb-2 border-b border-mist flex justify-between items-center">
                         <span className="font-display font-semibold text-xs text-ink">Notifications</span>
                         <span className="text-[10px] text-ink/50">{notifications.length} total</span>
