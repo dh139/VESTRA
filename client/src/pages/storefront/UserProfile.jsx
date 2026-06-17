@@ -6,6 +6,7 @@ import { useAuthStore } from '../../stores/authStore';
 import { useCartStore } from '../../stores/cartStore';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = API_URL.replace('/api', '');
 
 export default function UserProfile() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -427,7 +428,7 @@ export default function UserProfile() {
 
                       {order.invoiceUrl && (
                         <a 
-                          href={`http://localhost:5000${order.invoiceUrl}`}
+                          href={`${BASE_URL}${order.invoiceUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-brass hover:underline flex items-center gap-1"
@@ -676,7 +677,7 @@ export default function UserProfile() {
 
               {selectedOrder.invoiceUrl && (
                 <a 
-                  href={`http://localhost:5000${selectedOrder.invoiceUrl}`}
+                  href={`${BASE_URL}${selectedOrder.invoiceUrl}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-2.5 px-6 bg-pine text-bone text-[10px] font-bold uppercase rounded-full flex items-center gap-1.5 hover:bg-pine/90"

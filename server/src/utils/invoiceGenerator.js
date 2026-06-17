@@ -14,7 +14,10 @@ const __dirname = path.dirname(__filename);
 export const generateInvoice = async (order) => {
   return new Promise((resolve, reject) => {
     try {
-      const doc = new PDFDocument({ margin: 50 });
+      const doc = new PDFDocument({ 
+        size: 'LETTER',
+        margin: 50 
+      });
       const filename = `invoice_${order.orderNumber}.pdf`;
       const invoicesDir = path.join(__dirname, '..', '..', 'public', 'invoices');
       
@@ -28,84 +31,130 @@ export const generateInvoice = async (order) => {
       
       doc.pipe(stream);
       
-      // Brand Name Banner
-      doc.fillColor('#1F3D2B').font('Helvetica-Bold').fontSize(26).text('VESTRA', 50, 50);
-      doc.fillColor('#14110F').font('Helvetica').fontSize(10).text('Premium Apparel Label', 50, 80);
+      // 1. Brand Top Accent Bar
+      doc.rect(0, 0, 612, 4).fill('#1F3D2B');
       
-      // Document Metadata
-      doc.fillColor('#14110F').font('Helvetica-Bold').fontSize(18).text('INVOICE', 350, 50, { align: 'right' });
-      doc.font('Helvetica').fontSize(10)
-         .text(`Invoice No: INV-${order.orderNumber}`, 350, 75, { align: 'right' })
-         .text(`Date: ${new Date(order.createdAt).toLocaleDateString()}`, 350, 90, { align: 'right' })
-         .text(`Payment: ${order.payment.method} (${order.payment.status})`, 350, 105, { align: 'right' });
+      // Reset fill for drawing text
+      doc.fillColor('#1E293B');
       
-      doc.moveDown(4);
+      // 2. Header Block
+      // Brand Logo (Left)
+      doc.font('Helvetica-Bold').fontSize(24).fillColor('#1F3D2B').text('VESTRA', 50, 50);
+      doc.font('Helvetica').fontSize(8.5).fillColor('#64748B').text('Premium Apparel Label', 50, 76);
       
-      // Bill/Ship to details
-      const startY = doc.y;
-      doc.font('Helvetica-Bold').fontSize(11).text('DELIVER TO:', 50, startY);
-      doc.font('Helvetica').fontSize(10)
-         .text(order.shippingAddress.fullName, 50, startY + 15)
-         .text(order.shippingAddress.addressLine1, 50, startY + 30)
-         .text(order.shippingAddress.addressLine2 || '', 50, startY + 45)
-         .text(`${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.pincode}`, 50, startY + 60)
-         .text(order.shippingAddress.country, 50, startY + 75)
-         .text(`Phone: ${order.shippingAddress.phone}`, 50, startY + 90);
-         
-      doc.moveDown(6);
+      // Document Metadata (Right)
+      doc.font('Helvetica-Bold').fontSize(18).fillColor('#1E293B').text('INVOICE', 350, 50, { align: 'right', width: 212 });
       
-      let itemY = doc.y + 10;
-      // Drawing line divider
-      doc.lineCap('butt').moveTo(50, itemY).lineTo(550, itemY).strokeColor('#E4E1D8').lineWidth(1).stroke();
-      
-      itemY += 10;
-      doc.font('Helvetica-Bold').fontSize(9).fillColor('#14110F')
-         .text('Description', 50, itemY)
-         .text('Color', 220, itemY)
-         .text('Size', 280, itemY)
-         .text('Price', 340, itemY)
-         .text('Qty', 400, itemY)
-         .text('Amount', 460, itemY, { align: 'right', width: 90 });
-         
-      itemY += 15;
-      doc.moveTo(50, itemY).lineTo(550, itemY).strokeColor('#E4E1D8').stroke();
-      
-      // Loop over items
-      doc.font('Helvetica').fontSize(9);
-      order.items.forEach(item => {
-        itemY += 15;
-        doc.text(item.name, 50, itemY)
-           .text(item.color, 220, itemY)
-           .text(item.size, 280, itemY)
-           .text(`₹${item.price.toFixed(2)}`, 340, itemY)
-           .text(item.quantity.toString(), 400, itemY)
-           .text(`₹${(item.price * item.quantity).toFixed(2)}`, 460, itemY, { align: 'right', width: 90 });
+      const dateStr = new Date(order.createdAt).toLocaleDateString('en-IN', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
       });
       
-      itemY += 25;
-      doc.moveTo(50, itemY).lineTo(550, itemY).strokeColor('#E4E1D8').stroke();
+      doc.font('Helvetica').fontSize(9).fillColor('#475569')
+         .text(`Invoice No: INV-${order.orderNumber}`, 350, 74, { align: 'right', width: 212 })
+         .text(`Date: ${dateStr}`, 350, 88, { align: 'right', width: 212 })
+         .text(`Payment: ${order.payment.method.toUpperCase()} (${order.payment.status.toUpperCase()})`, 350, 102, { align: 'right', width: 212 });
       
-      // Totals Panel
-      itemY += 15;
-      doc.font('Helvetica').text('Subtotal:', 340, itemY).text(`₹${order.pricing.subtotal.toFixed(2)}`, 460, itemY, { align: 'right', width: 90 });
-      itemY += 15;
-      doc.text('Discount:', 340, itemY).text(`-₹${order.pricing.discount.toFixed(2)}`, 460, itemY, { align: 'right', width: 90 });
-      itemY += 15;
-      doc.text('Shipping:', 340, itemY).text(`₹${order.pricing.shipping.toFixed(2)}`, 460, itemY, { align: 'right', width: 90 });
-      itemY += 15;
-      doc.text(`GST (${order.pricing.tax > 0 ? '12%' : '0%'}):`, 340, itemY).text(`₹${order.pricing.tax.toFixed(2)}`, 460, itemY, { align: 'right', width: 90 });
+      // 3. Divider
+      doc.moveTo(50, 125).lineTo(562, 125).strokeColor('#E2E8F0').lineWidth(0.75).stroke();
       
-      itemY += 20;
-      doc.moveTo(340, itemY).lineTo(550, itemY).strokeColor('#1F3D2B').lineWidth(1.5).stroke();
+      // 4. Billing & Order Info (Columns side-by-side)
+      const detailsY = 145;
       
-      itemY += 10;
-      doc.font('Helvetica-Bold').fontSize(11).fillColor('#1F3D2B')
-         .text('Total:', 340, itemY)
-         .text(`₹${order.pricing.total.toFixed(2)}`, 460, itemY, { align: 'right', width: 90 });
+      // Left Column: Deliver To
+      doc.font('Helvetica-Bold').fontSize(8.5).fillColor('#94A3B8').text('DELIVER TO', 50, detailsY);
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor('#1E293B').text(order.shippingAddress.fullName, 50, detailsY + 15);
       
-      // Bottom branding
-      doc.font('Helvetica-Oblique').fontSize(8).fillColor('#B08968')
-         .text('This is a computer-generated invoice. Thank you for choosing VESTRA.', 50, doc.page.height - 60, { align: 'center' });
+      let addressLine = order.shippingAddress.addressLine1;
+      if (order.shippingAddress.addressLine2) {
+        addressLine += `, ${order.shippingAddress.addressLine2}`;
+      }
+      const addressDetails = `${addressLine}\n${order.shippingAddress.city}, ${order.shippingAddress.state} - ${order.shippingAddress.pincode}\n${order.shippingAddress.country}\nPhone: ${order.shippingAddress.phone}`;
+      doc.font('Helvetica').fontSize(9).fillColor('#475569').text(addressDetails, 50, detailsY + 30, { lineGap: 3.5 });
+      
+      // Right Column: Order details
+      doc.font('Helvetica-Bold').fontSize(8.5).fillColor('#94A3B8').text('ORDER SUMMARY', 350, detailsY);
+      doc.font('Helvetica-Bold').fontSize(10.5).fillColor('#1E293B').text(`Order Ref: #${order.orderNumber}`, 350, detailsY + 15);
+      
+      const orderDetails = `Status: ${order.status.toUpperCase()}\nPayment Method: ${order.payment.method.toUpperCase()}\nPayment Status: ${order.payment.status.toUpperCase()}`;
+      doc.font('Helvetica').fontSize(9).fillColor('#475569').text(orderDetails, 350, detailsY + 30, { lineGap: 3.5 });
+      
+      // 5. Items Table Section
+      const tableTop = 265;
+      
+      // Table Header Row Background
+      doc.rect(50, tableTop, 512, 22).fill('#F8FAFC');
+      
+      // Header Labels
+      doc.font('Helvetica-Bold').fontSize(8.5).fillColor('#475569');
+      doc.text('Description', 60, tableTop + 7)
+         .text('Color', 240, tableTop + 7)
+         .text('Size', 300, tableTop + 7)
+         .text('Price', 360, tableTop + 7)
+         .text('Qty', 420, tableTop + 7)
+         .text('Amount', 480, tableTop + 7, { align: 'right', width: 72 });
+         
+      // Table Rows
+      let itemY = tableTop + 22;
+      doc.font('Helvetica').fontSize(9);
+      
+      order.items.forEach((item, index) => {
+        // Draw bottom border for previous item / header
+        doc.moveTo(50, itemY).lineTo(562, itemY).strokeColor('#F1F5F9').lineWidth(0.5).stroke();
+        
+        doc.font('Helvetica-Bold').fillColor('#1E293B').text(item.name, 60, itemY + 8);
+        doc.font('Helvetica').fillColor('#475569')
+           .text(item.color || '-', 240, itemY + 8)
+           .text(item.size || '-', 300, itemY + 8)
+           .text(`Rs. ${item.price.toFixed(2)}`, 360, itemY + 8)
+           .text(item.quantity.toString(), 420, itemY + 8)
+           .text(`Rs. ${(item.price * item.quantity).toFixed(2)}`, 480, itemY + 8, { align: 'right', width: 72 });
+           
+        itemY += 26; // row height
+      });
+      
+      // Table end line
+      doc.moveTo(50, itemY).lineTo(562, itemY).strokeColor('#E2E8F0').lineWidth(0.75).stroke();
+      
+      // 6. Totals Panel
+      let totalY = itemY + 15;
+      
+      const writeTotalRow = (label, value, y, isBold = false, isFinal = false) => {
+        if (isBold) {
+          doc.font('Helvetica-Bold').fillColor('#1E293B').fontSize(9);
+        } else {
+          doc.font('Helvetica').fillColor('#475569').fontSize(8.5);
+        }
+        
+        if (isFinal) {
+          doc.fillColor('#1F3D2B').fontSize(11);
+        }
+        
+        doc.text(label, 360, y);
+        doc.text(value, 480, y, { align: 'right', width: 72 });
+      };
+      
+      writeTotalRow('Subtotal:', `Rs. ${order.pricing.subtotal.toFixed(2)}`, totalY);
+      totalY += 16;
+      writeTotalRow('Discount:', `-Rs. ${order.pricing.discount.toFixed(2)}`, totalY);
+      totalY += 16;
+      writeTotalRow('Shipping:', `Rs. ${order.pricing.shipping.toFixed(2)}`, totalY);
+      totalY += 16;
+      writeTotalRow(`GST (${order.pricing.tax > 0 ? '12%' : '0%'}):`, `Rs. ${order.pricing.tax.toFixed(2)}`, totalY);
+      totalY += 20;
+      
+      // Double line for grand total
+      doc.moveTo(360, totalY).lineTo(562, totalY).strokeColor('#1F3D2B').lineWidth(1.25).stroke();
+      totalY += 8;
+      
+      writeTotalRow('Grand Total:', `Rs. ${order.pricing.total.toFixed(2)}`, totalY, true, true);
+      
+      // 7. Footer / Terms
+      const footerY = doc.page.height - 75;
+      doc.moveTo(50, footerY - 15).lineTo(562, footerY - 15).strokeColor('#E2E8F0').lineWidth(0.5).stroke();
+      doc.font('Helvetica-Oblique').fontSize(8).fillColor('#94A3B8')
+         .text('This is a computer-generated invoice. Thank you for shopping with VESTRA.', 50, footerY, { align: 'center', width: 512 });
       
       doc.end();
       

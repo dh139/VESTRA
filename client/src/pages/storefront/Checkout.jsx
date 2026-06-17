@@ -6,6 +6,7 @@ import { useAuthStore } from '../../stores/authStore';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = API_URL.replace('/api', '');
 
 export default function Checkout() {
   const navigate = useNavigate();
@@ -253,7 +254,7 @@ export default function Checkout() {
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 pt-4">
           <a 
-            href={`http://localhost:5000${placedOrder.invoiceUrl}`}
+            href={`${BASE_URL}${placedOrder.invoiceUrl}`}
             target="_blank"
             rel="noopener noreferrer"
             className="px-8 py-3.5 bg-pine text-bone font-semibold text-xs rounded-full flex items-center justify-center gap-2 hover:bg-pine/90 transition-all duration-300 hover:scale-[1.02]"

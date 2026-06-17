@@ -3,6 +3,7 @@ import { Calendar, Eye, FileText, CheckCircle2, XCircle, ArrowUpDown, ChevronDow
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = API_URL.replace('/api', '');
 
 export default function OrderManager() {
   const [orders, setOrders] = useState([]);
@@ -180,7 +181,7 @@ export default function OrderManager() {
                 </button>
                 {order.invoiceUrl && (
                   <a
-                    href={`http://localhost:5000${order.invoiceUrl}`}
+                    href={`${BASE_URL}${order.invoiceUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="p-1.5 border border-mist hover:bg-mist/40 rounded-lg text-brass"
